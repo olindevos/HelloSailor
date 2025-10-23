@@ -1,37 +1,60 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+
+type Status = 'idle' | 'loading' | 'ok' | 'error';
+type Metric = 'walked' | 'distance';
 
 export default function Home() {
-  const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
+  const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState<string>('');
+  const [activeMetric, setActiveMetric] = useState<Metric | null>(null);
 
-  useEffect(() => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/stats/walked`;
-    fetch(url)
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setMessage(JSON.stringify(data));
-        setStatus('ok');
-      })
-      .catch((err) => {
-        setMessage(String(err));
-        setStatus('error');
-      });
-  }, []);
+  async function fetchMetric(metric: Metric) {
+    try {
+      setStatus('loading');
+      setActiveMetric(metric);
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/stats/${metric}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setMessage(JSON.stringify(data));
+      setStatus('ok');
+    } catch (err) {
+      setMessage(String(err));
+      setStatus('error');
+    }
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center">
-      <div className="max-w-xl w-full rounded-xl border p-6">
-        <h1 className="text-2xl font-semibold mb-4">Frontend ↔ Backend check</h1>
-        <p className="text-sm text-gray-500 mb-2">
+      <div className="max-w-xl w-full rounded-xl border p-6 space-y-4">
+        <h1 className="text-2xl font-semibold">Frontend ↔ Backend check</h1>
+
+        <p className="text-sm text-gray-500">
           Backend URL: <code>{process.env.NEXT_PUBLIC_API_URL}</code>
         </p>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => fetchMetric('walked')}
+            className={`px-4 py-2 rounded-xl border ${activeMetric === 'walked' ? 'bg-gray-100' : ''}`}
+          >
+            Fetch walked
+          </button>
+          <button
+            onClick={() => fetchMetric('distance')}
+            className={`px-4 py-2 rounded-xl border ${activeMetric === 'distance' ? 'bg-gray-100' : ''}`}
+          >
+            Fetch distance
+          </button>
+        </div>
+
+        {status === 'idle' && <p className="text-gray-500">Kies een metric hierboven.</p>}
         {status === 'loading' && <p>Bezig met ophalen…</p>}
         {status === 'ok' && (
           <p className="text-green-700">
-            ✅ Succes: <code>{message}</code>
+            ✅ Succes ({activeMetric}): <code>{message}</code>
           </p>
         )}
         {status === 'error' && (

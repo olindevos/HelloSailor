@@ -12,9 +12,10 @@ app.add_middleware(
     allow_methods=["GET"],
     allow_headers=["*"],
 )
+#dit geeft aan dat wanneer de gezochte endpoint niet in main.py staat hij door moet zoeken in stats.py
 app.include_router(stats.router)
 
-
+#server healthcheck
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}

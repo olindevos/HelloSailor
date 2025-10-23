@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+#hier staan alle endpoints die onder "stats" vallen
 # Maak een router aan voor alles onder /v1/stats
 router = APIRouter(prefix="/v1/stats", tags=["stats"])
 
