@@ -14,3 +14,11 @@ app.add_middleware(
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
+
+@app.get("/v1/stats/distance")
+def get_total_distance():
+    return {
+        "total_m": 12450,
+        "total_km": 12.45,
+        "updated_at": "2025-10-23T14:00:00Z"
+    }
