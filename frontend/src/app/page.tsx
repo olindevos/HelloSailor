@@ -7,7 +7,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/stats/distance`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/stats/walked`;
     fetch(url)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
