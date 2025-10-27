@@ -9,7 +9,7 @@ export default function Home() {
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/stats/distance`; // kies hier je endpoint
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/v1/strava/ping`;
     fetch(url)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -26,7 +26,6 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="max-w-xl w-full rounded-xl border p-6">
-        <h1 className="text-2xl font-semibold mb-4">Frontend ↔ Backend check</h1>
         <p className="text-sm text-gray-500 mb-2">
           Backend URL: <code>{process.env.NEXT_PUBLIC_API_URL}</code>
         </p>
