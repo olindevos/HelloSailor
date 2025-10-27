@@ -1,6 +1,10 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.routes import stats
+from app.routes import stats, oauth  # <-- voeg oauth toe
+
+app.include_router(stats.router)
+app.include_router(oauth.router)     # <-- en registreer
 
 
 app = FastAPI()
