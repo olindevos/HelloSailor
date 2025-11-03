@@ -1,153 +1,120 @@
 # Project: Strava Sailing Stats (monorepo)
-Monorepo 
+Hello Sailor – Project Documentation 
 
-/ (project-root)  
+Introduction 
 
- ├─ /frontend   
+Hello Sailor is a personal project that retrieves data from the Strava API to display the total distance 
 
-  └─ /backend  
+sailed. It uses React (TypeScript) for the frontend, FastAPI (Python) for the backend, and hosts 
 
-        ├─ app/  
-
-               ├─ init.py   
-
-                └─ main.py   
-
-       ├─ requirements.txt  
-
-        └─ render.yaml  
-
-------------------------------------------------------------------------------------------------------------- 
-
-Backend 
-
-Python 3 
-FastAPI 
- 
-
-Render (deployment) 
-
-Service type: Web Service 
-Language: Python 3 
-Build: pip install -r requirements.txt 
-Start: uvicorn app.main:app --host 0.0.0.0 --port $PORT 
-Live URL: https://<jouw-service>.onrender.com/healthz werkt 
- 
-
-Hoe start/stop je alles opnieuw? 
-
-Lokaal — backend 
-
-Terminal openen – naar backend map 
---- cd backend 
-Virtuele omgeving activeren: 
---- source .venv/bin/activate 
- 
-
-* Als dit faalt, bestaat .venv/ niet (dan heb je ‘m verwijderd of zit je in de verkeerde map). 
+them on Vercel and Render respectively. 
 
  
 
-Server starten: 
---- uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 
- 
-Check: 
-Browser: http://localhost:8000/healthz 
-Verwacht: {"status":"ok"} 
-Stoppen: 
-Terminal: CTRL + C 
-Virtualenv uitzetten (optioneel): deactivate 
-Cloud — backend (Render) 
+Architecture 
 
-Deploy triggert automatisch op git push naar je repo. 
-Handmatig redeployen: Render dashboard → jouw service → Manual Deploy. 
-Health check: https://<jouw-service>.onrender.com/healthz 
-Als build faalt: 
+This project is structured as a monorepo with two main directories: - **frontend/** – Next.js + 
 
-Meest voorkomend: bestand niet gepusht. 
-Fix: 
---- git add backend/* 
---- git commit -m "fix: backend files" 
---- git push 
+TypeScript app for the user interface. - **backend/** – FastAPI + Python app that communicates with Strava and exposes endpoints. Hosting: - Frontend → Vercel - Backend → Render 
+
  
-Check of root directory in Render op backend staat. 
+
+Technology Stack 
+
+Frontend: React, Next.js, TypeScript  
+
+Backend: FastAPI, Python, Requests  
+
+Hosting: Vercel (frontend), Render (backend) - **API:** Strava REST API 
+
  
 
  
 
-Hoe zet je je machine “klaar” na een pauze? 
-
-VS Code openen in project-root. 
-Backend: 
---- cd backend 
---- source .venv/bin/activate 
---- uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 
- 
-→ check http://localhost:8000/healthz 
-Frontend : 
---- cd ../frontend 
---- npm run dev 
- 
-→ http://localhost:3000 
-
- 
-
-Wat je altijd moet doen bij een backend-wijziging 
-
-Commit & push 
---- git add . 
---- git commit -m "beschrijf wat je hebt veranderd" 
---- git push 
- 
-Redeploy in Render 
-Open je service → Manual Deploy → Deploy latest commit 
-Test je endpoint 
-Bijvoorbeeld: https://<jouw-service>.onrender.com/v1/stats/distance 
  
 
  
 
-Hoe sluit je alles netjes af 
+Setup Instructions 
 
-Wanneer je klaar bent met werken aan je project: 
+1. Clone the repository.  
 
-1. Backend 
+2. Navigate to `backend/` and create a virtual environment: ```bash python-m venv .venv source .venv/bin/activate ```  
 
-1. In je terminal: 
+3. Install dependencies: ```bash pip install -requirements.txt ```  
 
---- CTRL + C 
-→ dat stopt de Uvicorn-server (die draait zolang dat proces actief is). 
- 
-2. Daarna (optioneel): 
+4. Run the backend locally: ```bash uvicorn app.main:app --reload ```  
 
---- deactivate 
-→ dat sluit je virtuele omgeving (.venv) af. Je ziet dat je prompt verandert van (.venv) naar gewoon bash of zsh. 
-* Je hoeft .venv niet te verwijderen. 
-Die map mag gewoon blijven staan — hij wordt automatisch weer gebruikt als je later source .venv/bin/activate uitvoert. 
-
-2. Frontend (als je die draait) 
-
-1. In de terminal waarin npm run dev actief is: 
-
---- CTRL + C 
-→ dat stopt de Next.js development server. 
- 
-3. VS Code en terminal 
-
-Je kunt nu gewoon VS Code afsluiten, of de terminal vensters sluiten. 
-Er blijft niks “op de achtergrond” draaien, want zowel Uvicorn als Next.js zijn handmatig gestopt. 
-
- 
- 
+5. In another terminal, navigate to `frontend/` and start the Next.js dev server: ```bash npm run dev ``` 
 
  
 
-Endpoints 
+Environment Variables 
 
-Healthz  
-Roep je aan wanneer je de status van de backend wil weten 
+The backend requires the following environment variables  
+
+(either via Render or a local `.env` file): 
+
+STRAVA_CLIENT_ID= xxxxx 
+
+STRAVA_CLIENT_SECRET= xxxxx 
+
+STRAVA_REFRESH_TOKEN= xxxxx 
 
  
 
-Get_total_distance  
-mockdata op te testen of ik snap hoe endpoints werken.  
+API Endpoints 
+
+Endpoint 		| 	Method 	| 	Description  
+
+`/healthz` 		| 	GET 		| 	Backend health check 
+
+ `/v1/stats/distance`	| 	GET 		| 	Returns total sailing distance (mock or 			|			|	live) 
+
+`/oauth/callback`	| 	GET 		| 	Receives the authorization code from 			|			|	Strava  
+
+`/v1/strava/ping` 	| 	GET 		| 	Tests connection with Strava and returns 							 athlete info  
+
+Deployment 
+
+Backend (Render) -  
+
+Root Directory: `backend` - Start Command:  
+
+`uvicorn app.main:app –host 0.0.0.0 --port $PORT`  
+
+- Manual Deploy after every commit.  
+
+ 
+
+Frontend (Vercel) - Framework: 
+
+Next.js - Environment Variable: `NEXT_PUBLIC_API_URL=https://.onrender.com` 
+
+ 
+
+Development Workflow 
+
+1. Make backend changes → commit and push.  
+
+2. Manually redeploy on Render.  
+
+3. Test locally on `/healthz` and `/v1/strava/ping`.  
+
+4. For frontend → commit, push, and deploy via Vercel.  
+
+5. Always stop the virtual environment with `deactivate` after work. 
+
+ 
+
+Future Improvements 
+
+- Replace mock distance data with live Strava data. - Add activity type filters (e.g., Sailing only). - 
+
+Add a visual dashboard for progress tracking. - Implement auto-refresh for daily data updates. 
+
+ 
+
+Author & License 
+
+Created by Olin as a personal learning and performance project. License: None 
